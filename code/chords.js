@@ -1,59 +1,88 @@
-outlets = 3
+outlets = 3;
 
 var _ref, _ref2;
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
 
 var removeDuplicatesSimple = function removeDuplicatesSimple(array) {
-	return array.filter(function (item, pos, self) {
-      return self.indexOf(item) == pos;
-    });
-}
+  return array.filter(function (item, pos, self) {
+    return self.indexOf(item) == pos;
+  });
+};
 var removeDuplicates = function removeDuplicates(array, path) {
   return array.filter(function (el, i, arr) {
-    return arr.map(function (mapObj) {
-      return walk(mapObj, path);
-    }).indexOf(walk(el, path)) === i;
+    return (
+      arr
+        .map(function (mapObj) {
+          return walk(mapObj, path);
+        })
+        .indexOf(walk(el, path)) === i
+    );
   });
 };
 
-var singleOctave = [{
-  noteName: "C",
-  black: false
-}, {
-  noteName: "C#",
-  black: true
-}, {
-  noteName: "D",
-  black: false
-}, {
-  noteName: "D#",
-  black: true
-}, {
-  noteName: "E",
-  black: false
-}, {
-  noteName: "F",
-  black: false
-}, {
-  noteName: "F#",
-  black: true
-}, {
-  noteName: "G",
-  black: false
-}, {
-  noteName: "G#",
-  black: true
-}, {
-  noteName: "A",
-  black: false
-}, {
-  noteName: "A#",
-  black: true
-}, {
-  noteName: "B",
-  black: false
-}];
+var singleOctave = [
+  {
+    noteName: "C",
+    black: false,
+  },
+  {
+    noteName: "C#",
+    black: true,
+  },
+  {
+    noteName: "D",
+    black: false,
+  },
+  {
+    noteName: "D#",
+    black: true,
+  },
+  {
+    noteName: "E",
+    black: false,
+  },
+  {
+    noteName: "F",
+    black: false,
+  },
+  {
+    noteName: "F#",
+    black: true,
+  },
+  {
+    noteName: "G",
+    black: false,
+  },
+  {
+    noteName: "G#",
+    black: true,
+  },
+  {
+    noteName: "A",
+    black: false,
+  },
+  {
+    noteName: "A#",
+    black: true,
+  },
+  {
+    noteName: "B",
+    black: false,
+  },
+];
 
 var getNoteIndexForMIDI = function getNoteIndexForMIDI(code) {
   return code - 21;
@@ -512,8 +541,12 @@ var chords = [
     quality: "Atonal",
   },
 ].map(function (chord) {
-  chord.set = removeDuplicatesSimple(chord.naturalSet.map(function(n) { return n % 12 }))
-  return chord
+  chord.set = removeDuplicatesSimple(
+    chord.naturalSet.map(function (n) {
+      return n % 12;
+    })
+  );
+  return chord;
 });
 
 var walk = function walk(el, path) {
@@ -537,19 +570,24 @@ var matchChords = function matchChords(notes) {
       return (note.index - arr[loopIndex].index + 96) % 12;
     });
     var dedupedList = removeDuplicatesSimple(integerList);
-    chords.filter(function (el) {
-      return el.set.length === dedupedList.length && el.set.every(function (e) {
-        return dedupedList.indexOf(e) !== -1;
+    chords
+      .filter(function (el) {
+        return (
+          el.set.length === dedupedList.length &&
+          el.set.every(function (e) {
+            return dedupedList.indexOf(e) !== -1;
+          })
+        );
+      })
+      .map(function (chord) {
+        matches.push({
+          chord: "".concat(arr[loopIndex].note, " ").concat(chord.name),
+          abbr: chord.abbr,
+          name: chord.name,
+          root: arr[loopIndex].note,
+          quality: chord.quality,
+        });
       });
-    }).map(function (chord) {
-      matches.push({
-        chord: "".concat(arr[loopIndex].note, " ").concat(chord.name),
-        abbr: chord.abbr,
-        name: chord.name,
-        root: arr[loopIndex].note,
-        quality: chord.quality
-      });
-    });
   }); // dedupe results
 
   matches = removeDuplicates(matches, "chord");
@@ -562,17 +600,16 @@ var holdTimeouts = {};
 var holdDuration = 0;
 
 var msg_float = function float(holdTime) {
-  holdDuration = holdTime
-}
+  holdDuration = holdTime;
+};
 
 var list = function list(noteIndex, vel) {
   var note = {
     index: noteIndex,
     black: blackForIndex(noteIndex),
     note: noteForIndex(noteIndex),
-    octave: octaveForIndex(noteIndex)
+    octave: octaveForIndex(noteIndex),
   };
-
 
   if (vel > 0) {
     // cancel existing timeouts
@@ -585,30 +622,36 @@ var list = function list(noteIndex, vel) {
     detectChords();
   } else {
     // delay noteOff
-    holdTimeouts[note.index] = new Task(function() {
+    holdTimeouts[note.index] = new Task(function () {
       activeNotes = activeNotes.filter(function (n) {
         return n.index !== note.index;
       });
       delete holdTimeouts[note.index];
       detectChords();
     });
-    holdTimeouts[note.index].schedule(holdDuration)
+    holdTimeouts[note.index].schedule(holdDuration);
   }
-}
+};
 
 var detectChords = function detectChords() {
   activeChords = matchChords(activeNotes);
-  var dedupedActiveNotes = removeDuplicates(activeNotes, 'note')
+  var dedupedActiveNotes = removeDuplicates(activeNotes, "note");
 
-  var chordsString = activeChords.map(function(chord) {
-    return chord.root + " " + (chord.abbr || chord.name)
-  }).join(" \n")
+  var chordsString = activeChords
+    .map(function (chord) {
+      return chord.root + " " + (chord.abbr || chord.name);
+    })
+    .join(" \n");
   var notesString = dedupedActiveNotes
-    .sort(function(a,b){ a.index - b.index })
-    .map(function(note){ return note.note }).join(" ")
+    .sort(function (a, b) {
+      a.index - b.index;
+    })
+    .map(function (note) {
+      return note.note;
+    })
+    .join(" ");
 
-
-  outlet(0, chordsString)
-  outlet(1, notesString || "-")
-  outlet(2, dedupedActiveNotes.length)
+  outlet(0, chordsString);
+  outlet(1, notesString || "-");
+  outlet(2, dedupedActiveNotes.length);
 };
