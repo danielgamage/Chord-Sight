@@ -1,3 +1,6 @@
+// chords (string)
+// notes (string)
+// note count (string)
 outlets = 3;
 
 var _ref, _ref2;
