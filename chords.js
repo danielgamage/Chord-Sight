@@ -3,22 +3,6 @@
 // note count (string)
 outlets = 3;
 
-var _ref, _ref2;
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true,
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
-}
-
 var removeDuplicatesSimple = function removeDuplicatesSimple(array) {
   return array.filter(function (item, pos, self) {
     return self.indexOf(item) == pos;
@@ -597,32 +581,19 @@ var matchChords = function matchChords(notes) {
   return matches;
 };
 
-var activeNotes = [];
-var activeChords = [];
-var holdTimeouts = {};
-var holdDuration = 0;
+var noteOn = function (note) {
+  // cancel existing timeouts
+  if (holdTimeouts[note.index]) {
+    holdTimeouts[note.index].cancel();
+  } else {
+    activeNotes.push(note);
+  }
 
-var msg_float = function float(holdTime) {
-  holdDuration = holdTime;
+  detectChords();
 };
-
-var list = function list(noteIndex, vel) {
-  var note = {
-    index: noteIndex,
-    black: blackForIndex(noteIndex),
-    note: noteForIndex(noteIndex),
-    octave: octaveForIndex(noteIndex),
-  };
-
-  if (vel > 0) {
-    // cancel existing timeouts
-    if (holdTimeouts[note.index]) {
-      holdTimeouts[note.index].cancel();
-    } else {
-      activeNotes.push(note);
-    }
-
-    detectChords();
+var noteOff = function (note) {
+  if (pedalSustained) {
+    sustainedNotes.push(note);
   } else {
     // delay noteOff
     holdTimeouts[note.index] = new Task(function () {
@@ -657,4 +628,57 @@ var detectChords = function detectChords() {
   outlet(0, chordsString);
   outlet(1, notesString || "-");
   outlet(2, dedupedActiveNotes.length);
+};
+
+// State variables
+var activeNotes = [];
+var activeChords = [];
+var holdTimeouts = {};
+var holdDuration = 0;
+var pedalSustained = false;
+var sustainedNotes = [];
+
+//
+// Inputs
+//
+
+// Input: Hold Text Input
+var msg_float = function float(holdTime) {
+  holdDuration = holdTime;
+};
+
+// Input: MIDI Events (Sustain Pedal)
+var midievent = function midievent(status, cc, value) {
+  if (status === 176) {
+    // Sustain pedal
+    if (cc === 64) {
+      // on
+      if (value > 64) {
+        pedalSustained = true;
+      } else {
+        pedalSustained = false;
+        sustainedNotes.forEach(function (note) {
+          noteOff(note);
+        });
+        sustainedNotes = [];
+      }
+      detectChords();
+    }
+  }
+};
+
+// Input: Notes
+var list = function list(noteIndex, vel) {
+  var note = {
+    index: noteIndex,
+    black: blackForIndex(noteIndex),
+    note: noteForIndex(noteIndex),
+    octave: octaveForIndex(noteIndex),
+  };
+
+  if (vel > 0) {
+    noteOn(note);
+  } else {
+    noteOff(note);
+  }
 };
