@@ -149,6 +149,18 @@ var chords = [
     quality: "Major",
   },
   {
+    name: "7th (no 3rd)",
+    abbr: "7 (no3)",
+    naturalSet: [0, 7, 10],
+    quality: "Major",
+  },
+  {
+    name: "7th (no 5th)",
+    abbr: "7 (no5)",
+    naturalSet: [0, 4, 10],
+    quality: "Major",
+  },
+  {
     name: "7th flat 5",
     abbr: "7♭5",
     naturalSet: [0, 4, 6, 10],
@@ -204,6 +216,30 @@ var chords = [
     quality: "Major",
   },
   {
+    name: "Power Chord",
+    abbr: "Power",
+    naturalSet: [0, 7],
+    quality: "Major",
+  },
+  {
+    name: "Major (no 5th)",
+    abbr: "Maj (no5)",
+    naturalSet: [0, 4],
+    quality: "Major",
+  },
+  {
+    name: "Major (no 5th) 9",
+    abbr: "Maj (no5) 9",
+    naturalSet: [0, 4, 9, 14],
+    quality: "Major",
+  },
+  {
+    name: "Major flat 5th",
+    abbr: "Maj♭5",
+    naturalSet: [0, 4, 6],
+    quality: "Major",
+  },
+  {
     name: "Major 11th",
     abbr: "Maj11",
     set: [0, 4, 7, 11, 2, 5],
@@ -214,6 +250,12 @@ var chords = [
     name: "Major 7th",
     abbr: "Maj7",
     naturalSet: [0, 4, 7, 11],
+    quality: "Major",
+  },
+  {
+    name: "Major 7th (no 3rd)",
+    abbr: "Maj7 (no3)",
+    naturalSet: [0, 7, 11],
     quality: "Major",
   },
   {
@@ -254,6 +296,12 @@ var chords = [
     quality: "Minor",
   },
   {
+    name: "Minor (no 5th)",
+    abbr: "Min (no5)",
+    naturalSet: [0, 3],
+    quality: "Minor",
+  },
+  {
     name: "Minor 11th",
     abbr: "Min11",
     naturalSet: [0, 3, 7, 10, 14, 17],
@@ -275,6 +323,12 @@ var chords = [
     name: "Minor 7th",
     abbr: "Min7",
     naturalSet: [0, 3, 7, 10],
+    quality: "Minor",
+  },
+  {
+    name: "Minor 7th (no 5th)",
+    abbr: "Min7 (no5)",
+    naturalSet: [0, 3, 10],
     quality: "Minor",
   },
   {
@@ -379,11 +433,6 @@ var chords = [
     abbr: "ɣ",
     naturalSet: [0, 3, 6, 8, 11],
     //           C♯ E  G  A  C♮
-  },
-  {
-    name: "Power",
-    naturalSet: [0, 7],
-    quality: "Indeterminate",
   },
   {
     name: "Seven six",
@@ -509,6 +558,12 @@ var matchChords = function matchChords(notes) {
 
 var activeNotes = [];
 var activeChords = [];
+var holdTimeouts = {};
+var holdDuration = 0;
+
+var msg_float = function float(holdTime) {
+  holdDuration = holdTime
+}
 
 var list = function list(noteIndex, vel) {
   var note = {
@@ -518,25 +573,42 @@ var list = function list(noteIndex, vel) {
     octave: octaveForIndex(noteIndex)
   };
 
-  post(note.note, vel, '\n')
 
   if (vel > 0) {
-    activeNotes.push(note);
-  } else {
-    activeNotes = activeNotes.filter(function (n) {
-      return n.index !== note.index;
-    });
-  }
+    // cancel existing timeouts
+    if (holdTimeouts[note.index]) {
+      holdTimeouts[note.index].cancel();
+    } else {
+      activeNotes.push(note);
+    }
 
+    detectChords();
+  } else {
+    // delay noteOff
+    holdTimeouts[note.index] = new Task(function() {
+      activeNotes = activeNotes.filter(function (n) {
+        return n.index !== note.index;
+      });
+      delete holdTimeouts[note.index];
+      detectChords();
+    });
+    holdTimeouts[note.index].schedule(holdDuration)
+  }
+}
+
+var detectChords = function detectChords() {
   activeChords = matchChords(activeNotes);
+  var dedupedActiveNotes = removeDuplicates(activeNotes, 'note')
 
   var chordsString = activeChords.map(function(chord) {
-	return chord.root + " " + (chord.abbr || chord.name)
+    return chord.root + " " + (chord.abbr || chord.name)
   }).join(" \n")
-  var notesString = activeNotes.map(function(note){ return note.note }).join(" ")
+  var notesString = dedupedActiveNotes
+    .sort(function(a,b){ a.index - b.index })
+    .map(function(note){ return note.note }).join(" ")
 
 
   outlet(0, chordsString)
   outlet(1, notesString || "-")
-  outlet(2, activeNotes.length)
+  outlet(2, dedupedActiveNotes.length)
 };
