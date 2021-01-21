@@ -1,0 +1,29 @@
+{
+  "name": "chord-sight",
+  "version": "0.0.3",
+  "description": "Max for Live device to monitor chords detected from MIDI input",
+  "main": "chords.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "rollup --config",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielgamage/Chord-Sight.git"
+  },
+  "author": "Daniel Gamage",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielgamage/Chord-Sight/issues"
+  },
+  "homepage": "https://github.com/danielgamage/Chord-Sight#readme",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@rollup/plugin-babel": "^5.2.2",
+    "@rollup/plugin-node-resolve": "^11.1.0"
+  }
+}
