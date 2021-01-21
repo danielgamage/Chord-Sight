@@ -258,7 +258,6 @@ var chords = [
   {
     name: "Major 11th",
     abbr: "Maj11",
-    set: [0, 4, 7, 11, 2, 5],
     naturalSet: [0, 4, 7, 11, 14, 17],
     quality: "Major",
   },
@@ -277,7 +276,6 @@ var chords = [
   {
     name: "Major 7th sharp 11th",
     abbr: "Maj7♯11",
-    set: [0, 4, 8, 11, 6],
     naturalSet: [0, 4, 8, 11, 18],
     quality: "Augmented",
   },
@@ -436,19 +434,16 @@ var chords = [
     name: "Alpha",
     abbr: "α",
     naturalSet: [0, 3, 6, 9, 11],
-    //           C♯ E  G  B♭ C E♭ F♯ A
   },
   {
     name: "Beta",
     abbr: "β",
     naturalSet: [0, 3, 6, 9, 11],
-    //           C♯ E  G  B♭ C♮
   },
   {
     name: "Gamma",
     abbr: "ɣ",
     naturalSet: [0, 3, 6, 8, 11],
-    //           C♯ E  G  A  C♮
   },
   {
     name: "Seven six",
