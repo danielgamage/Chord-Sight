@@ -304,6 +304,12 @@ var chords = [
     quality: "Major",
   },
   {
+    name: "Major 9th sharp 11",
+    abbr: "Maj9 ♯11",
+    naturalSet: [0, 4, 7, 11, 14, 18],
+    quality: "Major",
+  },
+  {
     name: "Major 13th",
     abbr: "Maj13",
     naturalSet: [0, 4, 7, 11, 14, 18, 21],
