@@ -172,7 +172,7 @@ var chords = [
   },
   {
     name: "7th (no 5th)",
-    abbr: "7 (no5)",
+    abbr: "7",
     naturalSet: [0, 4, 10],
     quality: "Major",
   },
@@ -245,7 +245,7 @@ var chords = [
   },
   {
     name: "Major (no 5th)",
-    abbr: "Maj (no5)",
+    abbr: "Maj",
     naturalSet: [0, 4],
     quality: "Major",
   },
@@ -305,7 +305,7 @@ var chords = [
   },
   {
     name: "Major 9th sharp 11",
-    abbr: "Maj9 ♯11",
+    abbr: "Maj9♯11",
     naturalSet: [0, 4, 7, 11, 14, 18],
     quality: "Major",
   },
@@ -323,7 +323,7 @@ var chords = [
   },
   {
     name: "Minor (no 5th)",
-    abbr: "Min (no5)",
+    abbr: "Min",
     naturalSet: [0, 3],
     quality: "Minor",
   },
@@ -353,7 +353,7 @@ var chords = [
   },
   {
     name: "Minor 7th (no 5th)",
-    abbr: "Min7 (no5)",
+    abbr: "Min7",
     naturalSet: [0, 3, 10],
     quality: "Minor",
   },
