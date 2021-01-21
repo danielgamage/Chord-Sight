@@ -26,7 +26,7 @@ var singleOctave = [
     black: false,
   },
   {
-    noteName: "C#",
+    noteName: "C♯",
     black: true,
   },
   {
@@ -34,7 +34,7 @@ var singleOctave = [
     black: false,
   },
   {
-    noteName: "D#",
+    noteName: "D♯",
     black: true,
   },
   {
@@ -46,7 +46,7 @@ var singleOctave = [
     black: false,
   },
   {
-    noteName: "F#",
+    noteName: "F♯",
     black: true,
   },
   {
@@ -54,7 +54,7 @@ var singleOctave = [
     black: false,
   },
   {
-    noteName: "G#",
+    noteName: "G♯",
     black: true,
   },
   {
@@ -62,7 +62,7 @@ var singleOctave = [
     black: false,
   },
   {
-    noteName: "A#",
+    noteName: "A♯",
     black: true,
   },
   {
