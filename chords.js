@@ -232,9 +232,15 @@ var chords = [
     quality: "Major",
   },
   {
-    name: "Power Chord",
-    abbr: "Power",
+    name: "5",
+    abbr: "5",
     naturalSet: [0, 7],
+    quality: "Major",
+  },
+  {
+    name: "5 diminished",
+    abbr: "5dim",
+    naturalSet: [0, 6],
     quality: "Major",
   },
   {
